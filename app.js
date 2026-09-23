@@ -816,31 +816,30 @@ function renderSemester() {
     }
 
 
+    /* ADDITIONAL / CUSTOM SUBJECTS */
+    html += customSubjectsSection(data);
+
     $("#courseArea").innerHTML =
         html ||
         '<p class="muted">No courses configured.</p>';
 
 
     /* LIVE UPDATE */
+    $("#courseArea").addEventListener("input", event => {
+        if (event.target.matches(".custom-code, .custom-name, .custom-credits")) {
+            calculateSemester(false);
+            updateDashboardFromCurrentSemester();
+        }
+    });
 
-    $("#courseArea")
-        .querySelectorAll("select")
-        .forEach(select => {
+    $("#courseArea").addEventListener("change", event => {
+        if (event.target.matches("select, .custom-counted")) {
+            calculateSemester(false);
+            updateDashboardFromCurrentSemester();
+        }
+    });
 
-            select.addEventListener(
-                "change",
-                () => {
-
-                    calculateSemester(false);
-
-                    updateDashboardFromCurrentSemester();
-
-                }
-            );
-
-        });
-
-
+    bindCustomSubjectEvents();
     calculateSemester(false);
 }
 
@@ -1112,6 +1111,102 @@ function mandatoryCard(semester, data) {
 
 
 /* -----------------------------
+   ADDITIONAL / CUSTOM SUBJECTS
+----------------------------- */
+
+function customSubjectRow(subject = {}) {
+    return `
+        <div class="custom-subject-row">
+            <input class="custom-code" type="text" placeholder="Subject code"
+                   value="${esc(subject.code || "")}">
+            <input class="custom-name" type="text" placeholder="Subject name"
+                   value="${esc(subject.name || "")}">
+            <input class="custom-credits" type="number" min="0" step="0.5"
+                   placeholder="Credits" value="${subject.credits ?? ""}">
+            <select class="custom-grade">
+                ${GRADES.map(grade => `
+                    <option value="${esc(grade)}"
+                        ${grade === (subject.grade || "") ? "selected" : ""}>
+                        ${grade || "Grade"}
+                    </option>
+                `).join("")}
+            </select>
+            <label class="custom-count">
+                <input type="checkbox" class="custom-counted"
+                       ${subject.counted !== false ? "checked" : ""}>
+                <span>Count in GPA / CGPA</span>
+            </label>
+            <button type="button" class="custom-remove"
+                    title="Remove subject" aria-label="Remove subject">Remove</button>
+        </div>
+    `;
+}
+
+function customSubjectsSection(data) {
+    const subjects = Array.isArray(data.customSubjects) ? data.customSubjects : [];
+
+    return `
+        <div class="course-group custom-subjects-group">
+            <div class="custom-subjects-head">
+                <div>
+                    <h3>Additional Subjects</h3>
+                    <p class="muted">
+                        Add extra subjects for this semester. Only checked subjects are included in GPA / CGPA.
+                    </p>
+                </div>
+                <button type="button" id="addCustomSubject" class="primary-btn">＋ Add Subject</button>
+            </div>
+            <div id="customSubjectsList">
+                ${subjects.length
+                    ? subjects.map(subject => customSubjectRow(subject)).join("")
+                    : '<div class="custom-empty">No additional subjects added yet.</div>'}
+            </div>
+        </div>
+    `;
+}
+
+function collectCustomSubjects() {
+    return Array.from(document.querySelectorAll("#customSubjectsList .custom-subject-row"))
+        .map(row => {
+            const credits = parseFloat(row.querySelector(".custom-credits")?.value || "0");
+            return {
+                code: row.querySelector(".custom-code")?.value.trim() || "",
+                name: row.querySelector(".custom-name")?.value.trim() || "",
+                credits: Number.isFinite(credits) ? credits : 0,
+                grade: row.querySelector(".custom-grade")?.value || "",
+                counted: !!row.querySelector(".custom-counted")?.checked
+            };
+        });
+}
+
+function bindCustomSubjectEvents() {
+    const list = document.querySelector("#customSubjectsList");
+    const addButton = document.querySelector("#addCustomSubject");
+    if (!list || !addButton) return;
+
+    addButton.onclick = () => {
+        list.querySelector(".custom-empty")?.remove();
+        list.insertAdjacentHTML("beforeend", customSubjectRow());
+        calculateSemester(false);
+        updateDashboardFromCurrentSemester();
+    };
+
+    list.onclick = event => {
+        const button = event.target.closest(".custom-remove");
+        if (!button) return;
+        button.closest(".custom-subject-row")?.remove();
+
+        if (!list.querySelector(".custom-subject-row")) {
+            list.innerHTML = '<div class="custom-empty">No additional subjects added yet.</div>';
+        }
+
+        calculateSemester(false);
+        updateDashboardFromCurrentSemester();
+    };
+}
+
+
+/* -----------------------------
    COLLECT CURRENT SEMESTER
 ----------------------------- */
 
@@ -1232,6 +1327,8 @@ function collectSemester() {
         });
 
 
+    data.customSubjects = collectCustomSubjects();
+
     return data;
 }
 
@@ -1272,6 +1369,20 @@ function calculateSemester(save = false) {
             }
 
         });
+
+
+    /* Additional / custom subjects */
+    (data.customSubjects || []).forEach(subject => {
+        if (
+            subject.counted &&
+            subject.credits > 0 &&
+            subject.grade &&
+            GP[subject.grade] !== undefined
+        ) {
+            credits += subject.credits;
+            points += subject.credits * GP[subject.grade];
+        }
+    });
 
 
     /* Professional / Open / Management electives */
