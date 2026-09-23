@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+    <meta name="theme-color" content="#0b1020">
+
+    <title>R2021 CSE • GPA & CGPA Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="app-shell">
+
+        <!-- ==================== SIDEBAR ==================== -->
+
+        <aside class="sidebar" id="sidebar">
+
+            <button type="button" id="menuClose" class="icon-btn sidebar-close" aria-label="Close menu"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+
+            <div class="brand">
+                <div class="brand-mark">Σ</div>
+
+                <div>
+                    <strong>R2021 CSE</strong>
+                    <span>Academic Dashboard</span>
+                </div>
+            </div>
+
+            <nav>
+
+                <button class="nav-item active" data-view="dashboard">
+                    <span class="nav-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></span>
+                    <span>Dashboard</span>
+                </button>
+
+                <button class="nav-item" data-view="semester">
+                    <span class="nav-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8.5 7.5h7M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"/></svg></span>
+                    <span>Semester Calculator</span>
+                </button>
+
+                <button class="nav-item" data-view="subjects">
+                    <span class="nav-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4.5A1.5 1.5 0 0 1 5.5 3H20v15H5.5A1.5 1.5 0 0 0 4 19.5z"/><path d="M4 19.5A1.5 1.5 0 0 0 5.5 21H20v-3"/></svg></span>
+                    <span>Curriculum</span>
+                </button>
+
+                <button class="nav-item" data-view="creator">
+                    <span class="nav-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg></span>
+                    <span>About the Creator</span>
+                </button>
+
+            </nav>
+
+            <div class="side-bottom">
+
+                <button id="themeBtn" class="side-action">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v18a9 9 0 0 0 0-18z" fill="currentColor"/></svg>
+                    <span>Dark mode</span>
+                </button>
+
+                <button id="resetBtn" class="side-action danger">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+                    <span>Reset data</span>
+                </button>
+
+                <small>
+                    Your academic data stays in this browser using local storage.
+                </small>
+
+            </div>
+
+        </aside>
+
+
+        <div class="scrim" id="scrim"></div>
+
+        <header class="mobile-header">
+        <button type="button" id="menuBtn" class="icon-btn" aria-label="Open menu" aria-expanded="false" aria-controls="sidebar"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+        <div class="brand"><div class="brand-mark">Σ</div><strong>R2021 CSE</strong></div>
+        <button type="button" id="mobileTheme" class="icon-btn" aria-label="Toggle dark mode"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v18a9 9 0 0 0 0-18z" fill="currentColor"/></svg></button>
+    </header>
+
+        <!-- ==================== MAIN CONTENT ==================== -->
+
+        <main>
+
+
+            <!-- ==================== DASHBOARD VIEW ==================== -->
+
+            <section id="dashboardView" class="view">
+
+                <div class="page-head">
+
+                    <div>
+                        <p class="kicker">
+                            ANNA UNIVERSITY · REGULATION 2021
+                        </p>
+
+                        <h1>
+                            Academic overview
+                        </h1>
+
+                        <p class="muted">
+                            Track semester GPAs and your cumulative performance.
+                        </p>
+                    </div>
+
+                    <button class="primary-btn" id="openCalculator">
+                        ＋ Enter grades
+                    </button>
+
+                </div>
+
+
+                <!-- Metrics -->
+
+                <div class="metric-grid">
+
+                    <article class="metric">
+                        <span>Current CGPA</span>
+                        <strong id="dashCgpa">0.00</strong>
+                        <em id="cgpaTrend">Add semester results</em>
+                    </article>
+
+                    <article class="metric">
+                        <span>Completed credits</span>
+                        <strong id="dashCredits">0</strong>
+                        <em>of 162 curriculum credits</em>
+                    </article>
+
+                    <article class="metric">
+                        <span>Latest GPA</span>
+                        <strong id="dashGpa">—</strong>
+                        <em id="latestSemester">No semester saved</em>
+                    </article>
+
+                    <article class="metric">
+                        <span>Semesters recorded</span>
+                        <strong id="dashSemesters">0 / 8</strong>
+                        <em>R2021 CSE</em>
+                    </article>
+
+                </div>
+
+
+                <!-- Dashboard Columns -->
+
+                <div class="two-col">
+
+                    <!-- CGPA Chart -->
+
+                    <article class="panel chart-panel">
+
+                        <div class="panel-head">
+
+                            <div>
+                                <h2>CGPA progression</h2>
+
+                                <p class="muted">
+                                    Cumulative weighted average by completed semester.
+                                </p>
+                            </div>
+
+                            <span class="mini-badge">
+                                Live
+                            </span>
+
+                        </div>
+
+                        <div class="chart-wrap">
+
+                            <canvas id="cgpaChart"></canvas>
+
+                            <div id="emptyChart" class="empty-chart">
+                                Enter grades to see your CGPA curve.
+                            </div>
+
+                        </div>
+
+                    </article>
+
+
+                    <!-- Semester Summary -->
+
+                    <article class="panel">
+
+                        <div class="panel-head">
+
+                            <div>
+                                <h2>Semester summary</h2>
+
+                                <p class="muted">
+                                    Your saved results.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div id="semesterMiniList" class="mini-list"></div>
+
+                    </article>
+
+                </div>
+
+
+                <!-- Curriculum Snapshot -->
+
+                <article class="panel">
+
+                    <div class="panel-head">
+
+                        <div>
+                            <h2>Curriculum snapshot</h2>
+
+                            <p class="muted">
+                                R2021 B.E. Computer Science and Engineering.
+                            </p>
+                        </div>
+
+                        <button class="text-btn" id="openCurriculum">
+                            View curriculum →
+                        </button>
+
+                    </div>
+
+                    <div class="curriculum-strip">
+
+                        <div>
+                            <b>162</b>
+                            <span>Total credits</span>
+                        </div>
+
+                        <div>
+                            <b>8</b>
+                            <span>Semesters</span>
+                        </div>
+
+                        <div>
+                            <b>PE I–VI</b>
+                            <span>Professional electives</span>
+                        </div>
+
+                        <div>
+                            <b>OE I–IV</b>
+                            <span>Open electives</span>
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </section>
+
+
+            <!-- ==================== SEMESTER CALCULATOR ==================== -->
+
+            <section id="semesterView" class="view hidden">
+
+                <div class="page-head">
+
+                    <div>
+
+                        <p class="kicker">
+                            SEMESTER CALCULATOR
+                        </p>
+
+                        <h1>
+                            Enter semester grades
+                        </h1>
+
+                        <p class="muted">
+                            Common subjects appear automatically; choose your
+                            PE/OE subjects from the dropdowns.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="panel">
+
+                    <div class="toolbar">
+
+                        <label>
+                            Semester
+
+                            <select id="semesterSelect"></select>
+                        </label>
+
+                        <div class="toolbar-note">
+                            GPA updates instantly as you choose grades.
+                        </div>
+
+                    </div>
+
+
+                    <div id="courseArea"></div>
+
+
+                    <!-- Calculator Footer -->
+
+                    <div class="calc-footer">
+
+                        <div>
+
+                            <span>
+                                Semester GPA
+                            </span>
+
+                            <strong id="semesterGpa">
+                                0.00
+                            </strong>
+
+                            <small id="semesterCredits">
+                                0 credits entered
+                            </small>
+
+                        </div>
+
+                        <button id="saveSemester" class="primary-btn">
+                            Save semester
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ==================== CURRICULUM VIEW ==================== -->
+
+            <section id="subjectsView" class="view hidden">
+
+                <div class="page-head">
+
+                    <div>
+
+                        <p class="kicker">
+                            CURRICULUM
+                        </p>
+
+                        <h1>
+                            R2021 CSE subjects
+                        </h1>
+
+                        <p class="muted">
+                            Browse the built-in semester and elective dataset.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="panel">
+
+                    <div id="curriculumArea"></div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ==================== CREATOR VIEW ==================== -->
+
+            <section id="creatorView" class="view hidden">
+
+                <!-- Creator Hero -->
+
+                <div class="creator-hero">
+
+                    <div class="creator-glow"></div>
+
+                    <div class="creator-grid">
+
+                        <!-- Creator Photo -->
+
+                        <div class="creator-photo-wrap">
+
+                            <div class="creator-ring"></div>
+
+                            <img
+                                class="creator-photo"
+                                src="mohanraman.jpg"
+                                alt="Mohanraman P"
+                                onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'creator-photo creator-photo-fallback',textContent:'MP'}))"
+                            >
+
+                            <span class="status-dot"></span>
+
+                        </div>
+
+
+                        <!-- Creator Introduction -->
+
+                        <div class="creator-intro">
+
+                            <p class="kicker">
+                                BUILT WITH CURIOSITY · R2021 CSE
+                            </p>
+
+                            <p class="eyebrow">
+                                Hello, I'm
+                            </p>
+
+                            <h1>
+                                Mohanraman <span>P</span>
+                            </h1>
+
+                            <div class="creator-role">
+                                C++ enthusiast
+                                <span>•</span>
+                                Problem Solver
+                            </div>
+
+                            <p class="creator-bio">
+                                Curious about how things work—from computers
+                                to trains. Always asking “why” and “why not.”
+                                Escaping the matrix, one question at a time.
+                            </p>
+
+
+                            <!-- Creator Links -->
+
+                            <div class="creator-actions">
+
+                                <a
+                                    class="creator-btn primary"
+                                    href="https://github.com/mohanraman-08"
+                                    target="_blank"
+                                    rel="noopener"
+                                >
+                                    GitHub ↗
+                                </a>
+
+                                <a
+                                    class="creator-btn secondary"
+                                    href="https://www.linkedin.com/in/mohanraman-p-3181103a3"
+                                    target="_blank"
+                                    rel="noopener"
+                                >
+                                    LinkedIn ↗
+                                </a>
+
+                                <a
+                                    class="creator-btn ghost"
+                                    href="https://www.instagram.com/mohan.xc"
+                                    target="_blank"
+                                    rel="noopener"
+                                >
+                                    Instagram ↗
+                                </a>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Creator Stats -->
+
+                    <div class="creator-stats">
+
+                        <div>
+                            <strong>03</strong>
+                            <span>Year</span>
+                        </div>
+
+                        <div>
+                            <strong>CSE</strong>
+                            <span>Department</span>
+                        </div>
+
+                        <div>
+                            <strong>C++</strong>
+                            <span>Current obsession</span>
+                        </div>
+
+                        <div>
+                            <strong>Why?</strong>
+                            <span>Default question</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Creator Information Columns -->
+
+                <div class="creator-columns">
+
+                    <!-- Person Behind It -->
+
+                    <article class="panel creator-card">
+
+                        <div class="section-label">
+                            01 / The person behind it
+                        </div>
+
+                        <h2>
+                            Curiosity is the starting point.
+                        </h2>
+
+                        <p>
+                            I'm a 3rd-year Computer Science and Engineering
+                            student at Government College of Engineering
+                            Srirangam, Trichy. I like taking things apart
+                            conceptually, understanding how they work, and
+                            then trying to build something of my own.
+                        </p>
+
+                        <p>
+                            This dashboard is one of those projects: a
+                            practical academic tool designed to make GPA and
+                            CGPA tracking simpler for R2021 CSE students.
+                        </p>
+
+                    </article>
+
+
+                    <!-- Currently Learning -->
+
+                    <article class="panel creator-card">
+
+                        <div class="section-label">
+                            02 / Currently learning
+                        </div>
+
+                        <div class="skill-cloud">
+
+                            <span class="skill featured">
+                                C++
+                            </span>
+
+                            <span class="skill">
+                                Problem Solving
+                            </span>
+
+                            <span class="skill">
+                                Algorithms
+                            </span>
+
+                            <span class="skill">
+                                Computer Science
+                            </span>
+
+                            <span class="skill">
+                                Curiosity
+                            </span>
+
+                        </div>
+
+
+                        <div class="quote-card">
+
+                            <span>“</span>
+
+                            <p>
+                                Problems solve pannanum.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+                </div>
+
+
+                <!-- Creator Manifesto -->
+
+                <article class="creator-manifesto">
+
+                    <div>
+
+                        <span class="section-label">
+                            03 / Why this exists
+                        </span>
+
+                        <h2>
+                            One small tool.<br>
+                            <em>A little less academic chaos.</em>
+                        </h2>
+
+                    </div>
+
+                    <p>
+                        The goal is simple: enter grades, instantly see the
+                        semester GPA, save the result locally, and watch the
+                        CGPA progression over time—without needing an account
+                        or database.
+                    </p>
+
+                </article>
+
+
+                <!-- Creator Footer -->
+
+                <div class="creator-footer-line">
+
+                    <span>
+                        R2021 CSE GPA & CGPA Dashboard
+                    </span>
+
+                    <span>
+                        Created by <strong>Mohanraman P</strong>
+                    </span>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+
+    <!-- ==================== JAVASCRIPT ==================== -->
+
+    <script src="app.js"></script>
+
+</body>
+
+</html>
